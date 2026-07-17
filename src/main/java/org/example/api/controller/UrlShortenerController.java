@@ -39,16 +39,12 @@ public class UrlShortenerController {
     ) {
         if (request == null) {
             return error(
-                    Response.Status.BAD_REQUEST,
-                    "O corpo da requisição é obrigatório"
+                    Response.Status.BAD_REQUEST, "O corpo da requisição é obrigatório"
             );
         }
 
         try {
-            ShortUrl created = service.shorten(
-                    request.getUrl(),
-                    request.getAlias()
-            );
+            ShortUrl created = service.shorten(request.getUrl(), request.getAlias());
 
             URI shortUri = uriInfo
                     .getBaseUriBuilder()
@@ -87,8 +83,7 @@ public class UrlShortenerController {
                             exception.getErrorCode() + ", message=" +
                             exception.getMessage(), exception);
             return error(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Erro ao acessar o banco de dados"
+                    Response.Status.INTERNAL_SERVER_ERROR, "Erro ao acessar o banco de dados"
             );
         }
     }
@@ -97,14 +92,10 @@ public class UrlShortenerController {
     @Path("{alias}")
     public Response redirect(@PathParam("alias") String alias) {
         try {
-            Optional<String> targetUrl =
-                    service.findTargetUrl(alias);
+            Optional<String> targetUrl = service.findTargetUrl(alias);
 
             if (!targetUrl.isPresent()) {
-                return error(
-                        Response.Status.NOT_FOUND,
-                        "URL encurtada não encontrada"
-                );
+                return error(Response.Status.NOT_FOUND, "URL encurtada não encontrada");
             }
 
             return Response
@@ -119,10 +110,7 @@ public class UrlShortenerController {
                             ", errorCode=" + exception.getErrorCode() +
                             ", message=" + exception.getMessage(),
                     exception);
-            return error(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Erro ao acessar o banco de dados"
-            );
+            return error(Response.Status.INTERNAL_SERVER_ERROR, "Erro ao acessar o banco de dados");
         }
     }
 
@@ -131,8 +119,7 @@ public class UrlShortenerController {
     public Response findAll(@Context UriInfo uriInfo) {
         try {
             List<ShortUrl> urls = service.findAll();
-            List<ShortenUrlResponse> response =
-                    new ArrayList<ShortenUrlResponse>();
+            List<ShortenUrlResponse> response = new ArrayList<ShortenUrlResponse>();
 
             for (ShortUrl url : urls) {
                 response.add(toResponse(url, uriInfo));
@@ -147,10 +134,7 @@ public class UrlShortenerController {
                             ", errorCode=" + exception.getErrorCode() +
                             ", message=" + exception.getMessage(),
                     exception);
-            return error(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Erro ao consultar o banco de dados"
-            );
+            return error(Response.Status.INTERNAL_SERVER_ERROR, "Erro ao consultar o banco de dados");
         }
     }
 
@@ -163,17 +147,11 @@ public class UrlShortenerController {
             @Context UriInfo uriInfo
     ) {
         if (request == null) {
-            return error(
-                    Response.Status.BAD_REQUEST,
-                    "O corpo da requisição é obrigatório"
-            );
+            return error(Response.Status.BAD_REQUEST, "O corpo da requisição é obrigatório");
         }
 
         try {
-            ShortUrl updated = service.update(
-                    alias,
-                    request.getUrl()
-            );
+            ShortUrl updated = service.update(alias, request.getUrl());
 
             return Response
                     .ok(toResponse(updated, uriInfo))
@@ -199,10 +177,7 @@ public class UrlShortenerController {
                             ", errorCode=" + exception.getErrorCode() +
                             ", message=" + exception.getMessage(),
                     exception);
-            return error(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Erro ao acessar o banco de dados"
-            );
+            return error(Response.Status.INTERNAL_SERVER_ERROR, "Erro ao acessar o banco de dados");
         }
     }
 
@@ -215,10 +190,7 @@ public class UrlShortenerController {
             boolean deleted = service.delete(alias);
 
             if (!deleted) {
-                return error(
-                        Response.Status.NOT_FOUND,
-                        "URL não encontrada"
-                );
+                return error(Response.Status.NOT_FOUND, "URL não encontrada");
             }
 
             return Response.noContent().build();
@@ -230,10 +202,7 @@ public class UrlShortenerController {
                             ", errorCode=" + exception.getErrorCode() +
                             ", message=" + exception.getMessage(),
                     exception);
-            return error(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Erro ao acessar o banco de dados"
-            );
+            return error(Response.Status.INTERNAL_SERVER_ERROR, "Erro ao acessar o banco de dados");
         }
     }
 
@@ -247,10 +216,7 @@ public class UrlShortenerController {
                     new LinkedHashMap<String, Object>();
 
             response.put("deleted", deleted);
-            response.put(
-                    "expirationMinutes",
-                    service.getExpirationMinutes()
-            );
+            response.put("expirationMinutes", service.getExpirationMinutes());
 
             return Response.ok(response).build();
 
@@ -262,8 +228,7 @@ public class UrlShortenerController {
                             ", message=" + exception.getMessage(),
                     exception);
             return error(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Erro ao excluir URLs expiradas"
+                    Response.Status.INTERNAL_SERVER_ERROR, "Erro ao excluir URLs expiradas"
             );
         }
     }

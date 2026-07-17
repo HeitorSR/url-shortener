@@ -87,16 +87,9 @@
   </section>
 
   <section class="grid">
-    <div class="card">
-      <h2>1. Health check</h2>
-      <span class="method">GET</span>
-      <label for="healthPath">Caminho</label>
-      <input id="healthPath" value="/health">
-      <button onclick="healthCheck(this)">Verificar saúde</button>
-    </div>
 
     <div class="card">
-      <h2>2. Encurtar URL</h2>
+      <h2>1. Encurtar URL</h2>
       <span class="method">POST</span>
       <label for="createPath">Caminho</label>
       <input id="createPath" value="/urls">
@@ -108,7 +101,7 @@
     </div>
 
     <div class="card">
-      <h2>3. Listar URLs</h2>
+      <h2>2. Listar URLs</h2>
       <span class="method">GET</span>
       <label for="listPath">Caminho</label>
       <input id="listPath" value="/urls">
@@ -116,7 +109,7 @@
     </div>
 
     <div class="card">
-      <h2>4. Editar URL</h2>
+      <h2>3. Editar URL</h2>
       <span class="method">PUT</span>
       <label for="updatePath">Caminho</label>
       <input id="updatePath" value="/urls/{alias}">
@@ -128,7 +121,7 @@
     </div>
 
     <div class="card">
-      <h2>5. Excluir URL</h2>
+      <h2>4. Excluir URL</h2>
       <span class="method">DELETE</span>
       <label for="deletePath">Caminho</label>
       <input id="deletePath" value="/urls/{alias}">
@@ -138,7 +131,7 @@
     </div>
 
     <div class="card">
-      <h2>6. Excluir expiradas</h2>
+      <h2>5. Excluir expiradas</h2>
       <span class="method">DELETE</span>
       <label for="expiredPath">Caminho</label>
       <input id="expiredPath" value="/urls/expired">
@@ -229,9 +222,6 @@
         }
     }
 
-    function healthCheck(button) {
-        request(button, "GET", byId("healthPath").value);
-    }
 
     function createUrl(button) {
         runValidated(() => {

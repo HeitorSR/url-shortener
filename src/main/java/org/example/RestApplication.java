@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.api.UrlRepository;
+import org.example.api.repository.UrlRepository;
 import org.example.api.controller.UrlShortenerController;
 import org.example.api.service.UrlShortenerService;
 import org.example.infra.Database;
@@ -22,28 +22,20 @@ public class RestApplication extends Application {
         Database.initialize();
 
 
-        UrlRepository repository =
-                new UrlRepository();
+        UrlRepository repository = new UrlRepository();
 
         UrlShortenerService service =
-                new UrlShortenerService(
-                        repository,
-                        ExpirationTime
-                );
+                new UrlShortenerService(repository, ExpirationTime);
 
-        UrlShortenerController urlController =
-                new UrlShortenerController(service);
+        UrlShortenerController urlController = new UrlShortenerController(service);
 
         Set<Object> resources = new HashSet<Object>();
 
         resources.add(urlController);
 
-        this.singletons =
-                Collections.unmodifiableSet(resources);
+        this.singletons = Collections.unmodifiableSet(resources);
 
-        System.out.println(
-                "Aplicação inicializada. Expiração: " + ExpirationTime + " horas"
-        );
+        System.out.println("Aplicação inicializada. Expiração: " + ExpirationTime + " minutos");
     }
 
     @Override

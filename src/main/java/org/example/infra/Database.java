@@ -44,10 +44,7 @@ public final class Database {
             statement.executeUpdate(sql);
 
         } catch (SQLException exception) {
-            throw new IllegalStateException(
-                    "Não foi possível inicializar o banco",
-                    exception
-            );
+            throw new IllegalStateException("Não foi possível inicializar o banco", exception);
         }
     }
 

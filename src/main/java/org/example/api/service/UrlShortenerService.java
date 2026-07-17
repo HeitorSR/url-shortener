@@ -1,6 +1,6 @@
 package org.example.api.service;
 
-import org.example.api.UrlRepository;
+import org.example.api.repository.UrlRepository;
 import org.example.api.exceptions.AliasAlreadyExistsException;
 import org.example.api.exceptions.UrlNotFoundException;
 import org.example.api.model.ShortUrl;
@@ -17,16 +17,13 @@ import java.util.regex.Pattern;
 public class UrlShortenerService {
 
     private static final char[] ALPHABET =
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                    .toCharArray();
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     private static final int RANDOM_ALIAS_LENGTH = 7;
 
-    private static final Pattern ALIAS_PATTERN =
-            Pattern.compile("[A-Za-z0-9_-]{3,32}");
+    private static final Pattern ALIAS_PATTERN = Pattern.compile("[A-Za-z0-9_-]{3,32}");
 
-    private static final Set<String> RESERVED_ALIASES =
-            new HashSet<String>(Arrays.asList("health", "urls"));
+    private static final Set<String> RESERVED_ALIASES = new HashSet<String>(Arrays.asList("urls"));
 
     private final UrlRepository repository;
     private final SecureRandom random;
@@ -36,7 +33,7 @@ public class UrlShortenerService {
     public UrlShortenerService(
             UrlRepository repository,
             long expirationMinutes
-    )  {
+    ) {
         this.repository = repository;
         this.expirationMinutes = expirationMinutes;
         this.random = new SecureRandom();
@@ -50,13 +47,12 @@ public class UrlShortenerService {
         String validatedUrl = validateUrl(targetUrl);
         Instant createdAt = Instant.now();
 
-        if (requestedAlias != null &&
-                !requestedAlias.trim().isEmpty()) {
+        if (requestedAlias != null && !requestedAlias.trim().isEmpty()) {
 
             String alias = requestedAlias.trim();
             validateAlias(alias);
 
-            if (!repository.insert(alias, validatedUrl, createdAt)){
+            if (!repository.insert(alias, validatedUrl, createdAt)) {
                 throw new AliasAlreadyExistsException(alias);
             }
 
@@ -84,17 +80,13 @@ public class UrlShortenerService {
 
     private String validateUrl(String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "O campo url é obrigatório"
-            );
+            throw new IllegalArgumentException("O campo url é obrigatório");
         }
 
         String url = value.trim();
 
         if (url.length() > 2048) {
-            throw new IllegalArgumentException(
-                    "A URL deve possuir no máximo 2048 caracteres"
-            );
+            throw new IllegalArgumentException("A URL deve possuir no máximo 2048 caracteres");
         }
 
         try {
@@ -106,23 +98,17 @@ public class UrlShortenerService {
                     (!"http".equalsIgnoreCase(scheme) &&
                             !"https".equalsIgnoreCase(scheme))) {
 
-                throw new IllegalArgumentException(
-                        "A URL deve ser absoluta e utilizar HTTP ou HTTPS"
-                );
+                throw new IllegalArgumentException("A URL deve ser absoluta e utilizar HTTP ou HTTPS");
             }
 
             if (uri.getUserInfo() != null) {
-                throw new IllegalArgumentException(
-                        "URLs contendo usuário ou senha não são permitidas"
-                );
+                throw new IllegalArgumentException("URLs contendo usuário ou senha não são permitidas");
             }
 
             return url;
 
         } catch (URISyntaxException exception) {
-            throw new IllegalArgumentException(
-                    "A URL informada é inválida"
-            );
+            throw new IllegalArgumentException("A URL informada é inválida");
         }
     }
 
@@ -137,9 +123,7 @@ public class UrlShortenerService {
         if (RESERVED_ALIASES.contains(
                 alias.toLowerCase(Locale.ROOT))) {
 
-            throw new IllegalArgumentException(
-                    "O alias informado é reservado"
-            );
+            throw new IllegalArgumentException("O alias informado é reservado");
         }
     }
 
@@ -170,10 +154,7 @@ public class UrlShortenerService {
 
         String validatedUrl = validateUrl(targetUrl);
 
-        boolean updated = repository.updateTargetUrl(
-                alias,
-                validatedUrl
-        );
+        boolean updated = repository.updateTargetUrl(alias, validatedUrl);
 
         if (!updated) {
             throw new UrlNotFoundException(alias);
@@ -193,9 +174,7 @@ public class UrlShortenerService {
                 .now()
                 .minus(expirationMinutes, ChronoUnit.MINUTES);
 
-        return repository.deleteCreatedBefore(
-                expirationThreshold
-        );
+        return repository.deleteCreatedBefore(expirationThreshold);
     }
 
 

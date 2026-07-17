@@ -1,4 +1,4 @@
-package org.example.api;
+package org.example.api.repository;
 
 import org.example.api.model.ShortUrl;
 import org.example.infra.Database;
@@ -27,10 +27,7 @@ public class UrlRepository {
 
             statement.setString(1, alias);
             statement.setString(2, targetUrl);
-            statement.setTimestamp(
-                    3,
-                    Timestamp.from(createdAt)
-            );
+            statement.setTimestamp(3, Timestamp.from(createdAt));
             statement.executeUpdate();
 
             return true;
