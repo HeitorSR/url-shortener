@@ -57,8 +57,8 @@ public class UrlShortenerController {
 
             ShortenUrlResponse response =
                     new ShortenUrlResponse(
-                            created.getTargetUrl(),
                             created.getAlias(),
+                            created.getTargetUrl(),
                             shortUri.toString(),
                             created.getCreatedAt().toString()
                     );
@@ -264,8 +264,8 @@ public class UrlShortenerController {
 
             response.put("deleted", deleted);
             response.put(
-                    "expirationHours",
-                    service.getExpirationHours()
+                    "expirationMinutes",
+                    service.getExpirationMinutes()
             );
 
             return Response.ok(response).build();

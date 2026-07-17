@@ -30,15 +30,15 @@ public class UrlShortenerService {
 
     private final UrlRepository repository;
     private final SecureRandom random;
-    private final long expirationHours;
+    private final long expirationMinutes;
 
 
     public UrlShortenerService(
             UrlRepository repository,
-            long expirationHours
+            long expirationMinutes
     )  {
         this.repository = repository;
-        this.expirationHours = expirationHours;
+        this.expirationMinutes = expirationMinutes;
         this.random = new SecureRandom();
     }
 
@@ -191,7 +191,7 @@ public class UrlShortenerService {
     public int deleteExpired() throws SQLException {
         Instant expirationThreshold = Instant
                 .now()
-                .minus(expirationHours, ChronoUnit.HOURS);
+                .minus(expirationMinutes, ChronoUnit.MINUTES);
 
         return repository.deleteCreatedBefore(
                 expirationThreshold
@@ -199,7 +199,7 @@ public class UrlShortenerService {
     }
 
 
-    public long getExpirationHours() {
-        return expirationHours;
+    public long getExpirationMinutes() {
+        return expirationMinutes;
     }
 }
