@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener - Cliente local</title>
+  <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            color: #243044;
+            background: #f3f6fb;
+        }
+        main { max-width: 1050px; margin: 0 auto; }
+        h1 { margin: 0 0 8px; color: #263b68; }
+        .subtitle { margin: 0 0 22px; color: #667085; }
+        .config, .card, .result {
+            background: #fff;
+            border: 1px solid #d8e0ee;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 3px 12px rgba(38, 59, 104, .06);
+        }
+        .config { margin-bottom: 18px; border-left: 5px solid #526ed3; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .card { border-top: 5px solid #70a1ff; }
+        .card:nth-child(2n) { border-top-color: #61c0a8; }
+        .card h2 { margin: 0 0 6px; font-size: 18px; }
+        .method { color: #526ed3; font-size: 12px; font-weight: bold; }
+        label { display: block; margin-top: 12px; font-size: 13px; font-weight: bold; }
+        input {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #bfc9da;
+            border-radius: 7px;
+            font: inherit;
+        }
+        input:focus { outline: 2px solid #b9c6f7; border-color: #526ed3; }
+        button {
+            margin-top: 14px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 8px;
+            background: #526ed3;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #3e56ad; }
+        button:disabled { opacity: .6; cursor: wait; }
+        .danger { background: #c94c5c; }
+        .danger:hover { background: #a93b49; }
+        .result { margin-top: 18px; }
+        .result h2 { margin-top: 0; font-size: 18px; }
+        #status { font-weight: bold; }
+        pre {
+            min-height: 90px;
+            margin-bottom: 0;
+            padding: 14px;
+            overflow: auto;
+            border-radius: 8px;
+            background: #172033;
+            color: #dce7ff;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .hint { color: #667085; font-size: 12px; }
+    </style>
+</head>
+<body>
+<main>
+  <h1>URL Shortener</h1>
+  <p class="subtitle">Cliente simples para testar os endpoints do backend.</p>
+
+  <section class="config">
+    <label for="baseUrl">URL base do backend</label>
+    <input id="baseUrl" value="http://localhost:8080/url-shortener/api"
+           placeholder="http://localhost:8080/url-shortener/api">
+    <p class="hint">Não coloque uma barra no final. O valor fica salvo neste navegador.</p>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>1. Health check</h2>
+      <span class="method">GET</span>
+      <label for="healthPath">Caminho</label>
+      <input id="healthPath" value="/health">
+      <button onclick="healthCheck(this)">Verificar saúde</button>
+    </div>
+
+    <div class="card">
+      <h2>2. Encurtar URL</h2>
+      <span class="method">POST</span>
+      <label for="createPath">Caminho</label>
+      <input id="createPath" value="/urls">
+      <label for="createUrl">URL original</label>
+      <input id="createUrl" type="url" placeholder="https://example.com/pagina">
+      <label for="createAlias">Alias (opcional)</label>
+      <input id="createAlias" placeholder="minha-url">
+      <button onclick="createUrl(this)">Encurtar</button>
+    </div>
+
+    <div class="card">
+      <h2>3. Listar URLs</h2>
+      <span class="method">GET</span>
+      <label for="listPath">Caminho</label>
+      <input id="listPath" value="/urls">
+      <button onclick="listUrls(this)">Listar todas</button>
+    </div>
+
+    <div class="card">
+      <h2>4. Editar URL</h2>
+      <span class="method">PUT</span>
+      <label for="updatePath">Caminho</label>
+      <input id="updatePath" value="/urls/{alias}">
+      <label for="updateAlias">Alias atual</label>
+      <input id="updateAlias" placeholder="minha-url">
+      <label for="updateUrl">Nova URL original</label>
+      <input id="updateUrl" type="url" placeholder="https://example.com/nova-pagina">
+      <button onclick="updateUrl(this)">Atualizar</button>
+    </div>
+
+    <div class="card">
+      <h2>5. Excluir URL</h2>
+      <span class="method">DELETE</span>
+      <label for="deletePath">Caminho</label>
+      <input id="deletePath" value="/urls/{alias}">
+      <label for="deleteAlias">Alias</label>
+      <input id="deleteAlias" placeholder="minha-url">
+      <button class="danger" onclick="deleteUrl(this)">Excluir</button>
+    </div>
+
+    <div class="card">
+      <h2>6. Excluir expiradas</h2>
+      <span class="method">DELETE</span>
+      <label for="expiredPath">Caminho</label>
+      <input id="expiredPath" value="/urls/expired">
+      <button class="danger" onclick="deleteExpired(this)">Excluir expiradas</button>
+    </div>
+  </section>
+
+  <section class="result">
+    <h2>Resposta</h2>
+    <p id="status">Nenhuma chamada realizada.</p>
+    <pre id="response">A resposta do backend aparecerá aqui.</pre>
+  </section>
+</main>
+
+<script>
+    const byId = (id) => document.getElementById(id);
+
+    const savedBaseUrl = localStorage.getItem("urlShortenerBaseUrl");
+    if (savedBaseUrl) byId("baseUrl").value = savedBaseUrl;
+
+    byId("baseUrl").addEventListener("change", (event) => {
+        localStorage.setItem("urlShortenerBaseUrl", normalizeBase(event.target.value));
+        event.target.value = normalizeBase(event.target.value);
+    });
+
+    function normalizeBase(value) {
+        return value.trim().replace(/\/+$/, "");
+    }
+
+    function endpoint(path, parameters = {}) {
+        let resolvedPath = path.trim();
+        Object.entries(parameters).forEach(([name, value]) => {
+            resolvedPath = resolvedPath.replace(`{${name}}`, encodeURIComponent(value));
+        });
+        return normalizeBase(byId("baseUrl").value) + "/" + resolvedPath.replace(/^\/+/, "");
+    }
+
+    async function request(button, method, path, body, parameters) {
+        const url = endpoint(path, parameters);
+        const options = { method, headers: { "Accept": "application/json" } };
+
+        if (body !== undefined) {
+            options.headers["Content-Type"] = "application/json";
+            options.body = JSON.stringify(body);
+        }
+
+        button.disabled = true;
+        byId("status").textContent = `${method} ${url} — aguardando...`;
+        byId("response").textContent = "";
+
+        try {
+            const response = await fetch(url, options);
+            const rawBody = await response.text();
+            let displayedBody = rawBody || "(resposta sem conteúdo)";
+
+            try {
+                displayedBody = JSON.stringify(JSON.parse(rawBody), null, 2);
+            } catch (_) {
+                // A resposta não é JSON; exibe o texto original.
+            }
+
+            byId("status").textContent = `${response.status} ${response.statusText} — ${method} ${url}`;
+            byId("status").style.color = response.ok ? "#19734d" : "#b42335";
+            byId("response").textContent = displayedBody;
+        } catch (error) {
+            byId("status").textContent = `Falha ao chamar ${method} ${url}`;
+            byId("status").style.color = "#b42335";
+            byId("response").textContent =
+                `${error.name}: ${error.message}\n\n` +
+                "Confira se o backend está em execução e se CORS está habilitado.";
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    function required(id, description) {
+        const value = byId(id).value.trim();
+        if (!value) throw new Error(`Preencha o campo: ${description}.`);
+        return value;
+    }
+
+    function runValidated(action) {
+        try { action(); }
+        catch (error) {
+            byId("status").textContent = "Preenchimento incompleto";
+            byId("status").style.color = "#b42335";
+            byId("response").textContent = error.message;
+        }
+    }
+
+    function healthCheck(button) {
+        request(button, "GET", byId("healthPath").value);
+    }
+
+    function createUrl(button) {
+        runValidated(() => {
+            const body = { url: required("createUrl", "URL original") };
+            const alias = byId("createAlias").value.trim();
+            if (alias) body.alias = alias;
+            request(button, "POST", byId("createPath").value, body);
+        });
+    }
+
+    function listUrls(button) {
+        request(button, "GET", byId("listPath").value);
+    }
+
+    function updateUrl(button) {
+        runValidated(() => request(
+            button,
+            "PUT",
+            byId("updatePath").value,
+            { url: required("updateUrl", "Nova URL original") },
+            { alias: required("updateAlias", "Alias atual") }
+        ));
+    }
+
+    function deleteUrl(button) {
+        runValidated(() => request(
+            button,
+            "DELETE",
+            byId("deletePath").value,
+            undefined,
+            { alias: required("deleteAlias", "Alias") }
+        ));
+    }
+
+    function deleteExpired(button) {
+        request(button, "DELETE", byId("expiredPath").value);
+    }
+</script>
+</body>
+</html>

@@ -82,14 +82,10 @@ public class UrlShortenerController {
 
         } catch (SQLException exception) {
             LOGGER.log(
-                    Level.SEVERE,
-                    "Erro no banco. SQLState=" +
-                            exception.getSQLState() +
-                            ", errorCode=" +
-                            exception.getErrorCode() +
-                            ", message=" +
-                            exception.getMessage(),
-                    exception);
+                    Level.SEVERE, "Erro no banco. SQLState=" +
+                            exception.getSQLState() + ", errorCode=" +
+                            exception.getErrorCode() + ", message=" +
+                            exception.getMessage(), exception);
             return error(
                     Response.Status.INTERNAL_SERVER_ERROR,
                     "Erro ao acessar o banco de dados"
@@ -119,12 +115,9 @@ public class UrlShortenerController {
         } catch (SQLException exception) {
             LOGGER.log(
                     Level.SEVERE,
-                    "Erro no banco. SQLState=" +
-                            exception.getSQLState() +
-                            ", errorCode=" +
-                            exception.getErrorCode() +
-                            ", message=" +
-                            exception.getMessage(),
+                    "Erro no banco. SQLState=" + exception.getSQLState() +
+                            ", errorCode=" + exception.getErrorCode() +
+                            ", message=" + exception.getMessage(),
                     exception);
             return error(
                     Response.Status.INTERNAL_SERVER_ERROR,
@@ -150,12 +143,9 @@ public class UrlShortenerController {
         } catch (SQLException exception) {
             LOGGER.log(
                     Level.SEVERE,
-                    "Erro no banco. SQLState=" +
-                            exception.getSQLState() +
-                            ", errorCode=" +
-                            exception.getErrorCode() +
-                            ", message=" +
-                            exception.getMessage(),
+                    "Erro no banco. SQLState=" + exception.getSQLState() +
+                            ", errorCode=" + exception.getErrorCode() +
+                            ", message=" + exception.getMessage(),
                     exception);
             return error(
                     Response.Status.INTERNAL_SERVER_ERROR,
@@ -205,12 +195,9 @@ public class UrlShortenerController {
         } catch (SQLException exception) {
             LOGGER.log(
                     Level.SEVERE,
-                    "Erro no banco. SQLState=" +
-                            exception.getSQLState() +
-                            ", errorCode=" +
-                            exception.getErrorCode() +
-                            ", message=" +
-                            exception.getMessage(),
+                    "Erro no banco. SQLState=" + exception.getSQLState() +
+                            ", errorCode=" + exception.getErrorCode() +
+                            ", message=" + exception.getMessage(),
                     exception);
             return error(
                     Response.Status.INTERNAL_SERVER_ERROR,
@@ -239,12 +226,9 @@ public class UrlShortenerController {
         } catch (SQLException exception) {
             LOGGER.log(
                     Level.SEVERE,
-                    "Erro no banco. SQLState=" +
-                            exception.getSQLState() +
-                            ", errorCode=" +
-                            exception.getErrorCode() +
-                            ", message=" +
-                            exception.getMessage(),
+                    "Erro no banco. SQLState=" + exception.getSQLState() +
+                            ", errorCode=" + exception.getErrorCode() +
+                            ", message=" + exception.getMessage(),
                     exception);
             return error(
                     Response.Status.INTERNAL_SERVER_ERROR,
@@ -273,12 +257,9 @@ public class UrlShortenerController {
         } catch (SQLException exception) {
             LOGGER.log(
                     Level.SEVERE,
-                    "Erro no banco. SQLState=" +
-                            exception.getSQLState() +
-                            ", errorCode=" +
-                            exception.getErrorCode() +
-                            ", message=" +
-                            exception.getMessage(),
+                    "Erro no banco. SQLState=" + exception.getSQLState() +
+                            ", errorCode=" + exception.getErrorCode() +
+                            ", message=" + exception.getMessage(),
                     exception);
             return error(
                     Response.Status.INTERNAL_SERVER_ERROR,
@@ -314,6 +295,5 @@ public class UrlShortenerController {
                 .entity(Collections.singletonMap("error", message))
                 .build();
     }
-
 
 }

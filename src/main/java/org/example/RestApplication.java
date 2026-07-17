@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@ApplicationPath("/")
+@ApplicationPath("/api")
 public class RestApplication extends Application {
 
     private final Set<Object> singletons;

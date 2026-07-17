@@ -1,0 +1,17 @@
+# Default ignored files
+/shelf/
+/.idea/workspace.xml
+
+# Maven
+**/target/
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Logs e configurações locais
+*.log
+.env
+.env.*
+!.env.example
